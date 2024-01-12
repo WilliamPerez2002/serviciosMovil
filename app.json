@@ -21,7 +21,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.williamperez2002.grupo7"
     },
     "web": {
       "favicon": "./assets/favicon.png"

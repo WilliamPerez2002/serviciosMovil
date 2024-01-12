@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
+import { showMessage } from "react-native-flash-message";
 
 export default function StudentForm() {
     const navigation = useNavigation();
@@ -11,22 +12,54 @@ export default function StudentForm() {
     const [cedula, setCedula] = useState("");
     const [telefono, setTelefono] = useState("");
     const [direccion, setDireccion] = useState("");
+    const [students, setStudents] = useState([]);
+
+    
+
+    const comprobarEstudiante = () => {
+        console.log(cedula);
+        axios
+            .get(`https://services-project-production.up.railway.app/rest/get/${cedula}`)
+            .then((response) => {
+                
+                    
+                    showMessage({
+                        message: "Ya existe un estudiante con esa cedula",
+                        type: "warning",
+                        icon: "warning",
+                      });
+                
+            })
+            .catch((error) => {
+                handleSaveStudent();
+            }
+            );
+    }
+
+
     const handleSaveStudent = () => {
-        axios.post("http://localhost/quinto-api/api.php", {
-            NOM_EST: nombre,
-            APE_EST: apellido,
-            CED_EST: cedula,
-            TEL_EST: telefono,
-            DIR_EST: direccion,
+
+
+        axios.post(`https://services-project-production.up.railway.app/rest/save/${cedula}`, {
+            nombre: nombre,
+            apellido: apellido,
+            telefono: telefono,
+            direccion: direccion,
         },{
             headers: {
                 'Content-Type': 'application/json'
             }
         }
         ).then(response => {
+            
+            showMessage({
+                message: "Estudiante guardado",
+                type: "success",
+                icon: "success",
+              });
             navigation.goBack();
         }).catch(error => {
-            console.error(error);
+            console.error("Error al guardar estudiante, revise el formulario");
         });
     };
     return (
@@ -46,8 +79,8 @@ export default function StudentForm() {
             <Text style={styles.itemName} >Direccion</Text>
             <TextInput style={styles.input} onChangeText={text => setDireccion(text)} value={direccion} />
 
-            <Pressable style={styles.button} title="Guardar Estudiante" onPress={handleSaveStudent}>
-                <Text style={{ color: "#f0f0f0" }}>Crear</Text>
+            <Pressable style={styles.button} title="Guardar Estudiante" onPress={comprobarEstudiante}>
+                <Text style={{ color:"#000000"}}>Crear</Text>
             </Pressable>
         </View>
     )
@@ -56,7 +89,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#fff",
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: "center"
     },
     title: {
         fontSize: 20,
@@ -70,10 +104,10 @@ const styles = StyleSheet.create({
         alignItems: "center",
         width: 90,
         borderRadius: 15,
-        backgroundColor: "#164220",
+        backgroundColor: "#d9dbda",
         paddingHorizontal: 10,
         paddingVertical: 10,
-        margin: 5
+        margin: 20
     },
     input: {
         height: 40,

@@ -21,16 +21,22 @@ export default function StudentForm({ route }) {
     const [telefono, setTelefono] = useState("");
     const [direccion, setDireccion] = useState("");
     const handleSaveStudent = () => {
-        axios.put("http://localhost/quinto-api/api.php", {
-            NOM_EST: nombre,
-            APE_EST: apellido,
-            CED_EST: cedula,
-            TEL_EST: telefono,
-            DIR_EST: direccion,
+        axios.put(`https://services-project-production.up.railway.app/rest/edit/${cedula}`, {
+            nombre: nombre,
+            apellido: apellido,
+            cedula: cedula,
+            telefono: telefono,
+            direccion: direccion,
         }).then(response => {
+            showMessage({
+                message: "Estudiante actualizado",
+                type: "success",
+                icon: "success",
+              });
             navigation.goBack();
         }).catch(error => {
-            console.error(error);
+            console.error("Error al actualizar estudiante");
+
         });
     };
     return (
@@ -51,7 +57,7 @@ export default function StudentForm({ route }) {
             <TextInput style={styles.input} onChangeText={text => setDireccion(text)} value={direccion} />
 
             <Pressable style={styles.button} title="Guardar Estudiante" onPress={handleSaveStudent}>
-                <Text style={{ color: "#f0f0f0" }}>Guardar</Text>
+                <Text style={{ color:"#000000"}}>Guardar</Text>
             </Pressable>
         </View>
     )
@@ -60,7 +66,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#fff",
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: "center"
     },
     title: {
         fontSize: 20,
@@ -74,10 +81,11 @@ const styles = StyleSheet.create({
         alignItems: "center",
         width: 90,
         borderRadius: 15,
-        backgroundColor: "#164220",
+        backgroundColor: "#d9dbda",
         paddingHorizontal: 10,
         paddingVertical: 10,
-        margin: 5
+        margin: 20,
+        
     },
     input: {
         height: 40,

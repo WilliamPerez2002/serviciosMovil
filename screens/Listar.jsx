@@ -1,8 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, View, Modal } from "react-native";
-import { TouchableOpacity } from "react-native-web";
+import { FlatList, Pressable, StyleSheet, Text, View, Modal, TouchableOpacity } from "react-native";
 import { useIsFocused } from '@react-navigation/native';
 import TextInputBuscar from "../components/text_input.jsx";
 
@@ -21,7 +20,7 @@ const StudentList = () => {
 
   const cargarEstudiantes = () => {
     axios
-      .get("http://localhost/quinto-api/api.php")
+      .get("https://services-project-production.up.railway.app/rest/all")
       .then((response) => {
         setStudents(response.data);
       })
@@ -41,7 +40,7 @@ const StudentList = () => {
   };
 
   const eliminarEstudiante = (cedula) => {
-    axios.delete(`http://localhost/quinto-api/api.php?CED_EST=${cedula}`)
+    axios.delete(`https://services-project-production.up.railway.app/rest/delete/${cedula}`)
       .then(response => {
         cargarEstudiantes();
         console.log(response.data);
@@ -58,15 +57,15 @@ const StudentList = () => {
         <Pressable onPress={() => handlePress(item)}>
           <View style={styles.itemContainer}>
             <Text style={styles.itemName}>
-              {item.NOM_EST} {item.APE_EST}
+              {item.nombre} {item.apellido}
             </Text>
             {isExpanded && (
               <>
-                <Text style={styles.itemDetails}>Cédula: {item.CED_EST}</Text>
-                <Text style={styles.itemDetails}>
-                  Dirección: {item.DIR_EST}
+                <Text style={styles.itemDetails}> <Text style={styles.subtitles}>Cédula:</Text> {item.cedula}</Text>
+                <Text style={styles.itemDetails}> <Text style={styles.subtitles}>Dirección:</Text> 
+                   {item.direccion}
                 </Text>
-                <Text style={styles.itemDetails}>Teléfono: {item.TEL_EST}</Text>
+                <Text style={styles.itemDetails}> <Text style={styles.subtitles}>Teléfono:</Text> {item.telefono}</Text>
                 <View style={styles.buttonSeparator}>
                   <TouchableOpacity
                     style={[styles.deleteButton, { backgroundColor: 'red' }]}
@@ -89,7 +88,7 @@ const StudentList = () => {
                         <TouchableOpacity
                           style={styles.modalButton}
                           onPress={() => {
-                            eliminarEstudiante(item.CED_EST);
+                            eliminarEstudiante(item.cedula);
                             setModalVisible(false);
                           }}
                         >
@@ -112,7 +111,7 @@ const StudentList = () => {
                     title="Actualizar"
                     onPress={() =>
                       navigation.navigate("Editar", {
-                        estudiante: { cedula: item.CED_EST, nombre: item.NOM_EST, apellido: item.APE_EST, direccion: item.DIR_EST, telefono: item.TEL_EST }
+                        estudiante: { cedula: item.cedula, nombre: item.nombre, apellido: item.apellido, direccion: item.direccion, telefono: item.telefono }
                       })
                     }
                   >
@@ -128,18 +127,19 @@ const StudentList = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Listado de Estudiantes</Text>
+      <Text style={styles.title}>Listado de Estudiantess</Text>
 
       <TextInputBuscar setStudents={setStudents} />
 
       <FlatList
+      style={{ width: "100%", marginTop: 20, marginBottom: 20,padding: 10 }}
         data={students}
-        keyExtractor={(item) => item.CED_EST}
+        keyExtractor={(item) => item.cedula}
         renderItem={renderItem}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
       <Pressable style={styles.button} onPress={() => navigation.navigate("Guardar")}>
-        <Text style={{ color: "#f0f0f0" }}>Agregar</Text>
+        <Text style={{ color: "#000000" }}>Agregar</Text>
       </Pressable>
     </View>
   );
@@ -149,13 +149,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    justifyContent: "space-between",
   },
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    margin: 10,
-    color: "red",
+    margin: 20,
+    color: "#000000",
     textAlign: "center",
+  },
+  subtitles:{
+    fontSize: 16,
+    fontWeight: "bold",
+
   },
   itemContainer: {
     flexDirection: "column",
@@ -164,6 +170,7 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 18,
     fontWeight: "bold",
+    marginBottom: 5,
   },
   itemDetails: {
     fontSize: 16,
@@ -185,16 +192,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
     margin: 5,
-  }, button: {
+    marginTop: 10,
+
+  }, 
+  
+  button: {
     alignSelf: 'center',
     alignItems: 'center',
     width: 90, // Establece un ancho mínimo inicial
     borderRadius: 15,
-    backgroundColor: '#164220',
+    backgroundColor: '#d9dbda',
     paddingHorizontal: 10,
     paddingVertical: 10,
-    margin: 5,
-  }, centeredView: {
+    marginBottom: 20,
+  },
+   centeredView: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

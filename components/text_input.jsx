@@ -1,70 +1,142 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet, TextInput, Button} from 'react-native';
+import { StyleSheet, TextInput,Text, TouchableOpacity, View} from 'react-native';
 import axios from "axios";
+import { Feather, Entypo, AntDesign  } from "@expo/vector-icons";
+import { showMessage } from "react-native-flash-message";
 
 const TextInputBuscar = (params) => {
-  const [text, onChangeText] = React.useState('Useless Text');
-  const [number, onChangeNumber] = React.useState('');
+  const [cedula, setCedula] = React.useState('');
+  const [clicked, setClicked] = React.useState(false);
 
 
-  const cargarEstudiantes = () => {
-    console.log(number);
-    axios
-      .get("http://localhost/quinto-api/api.php?CED_EST=".concat(number))
-      .then((response) => {
+  const cargarEstudiantes = (num) => {
+    console.log(cedula);
 
-        console.log(response.data);
-        params.setStudents(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    if (cedula == '' || num == 0) {
+      axios
+        .get("https://services-project-production.up.railway.app/rest/all")
+        .then((response) => {
+          params.setStudents(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }else{
+
+      axios
+        .get(`https://services-project-production.up.railway.app/rest/search/${cedula}`)
+        .then((response) => {
+  
+          params.setStudents(response.data);
+        })
+        .catch((error) => {
+          showMessage({
+            message: "Estudiante no encontrado",
+            type: "danger",
+            icon: "danger",
+          });
+        });
+    }
+
+
   }
 
 
 
   return (
-    <SafeAreaView style={styles.SafeAreaView}>
+ 
+
+<View style={styles.container}>
+      <View
+        style={
+            styles.searchBar__clicked
+        }
+      >
+        {/* search Icon */}
+        <AntDesign
+          name="idcard"
+          size={24}
+          color="#000000"
+          style={{ marginLeft: 1 }}
+        />
+        {/* Input field */}
+        <TextInput
+          style={styles.input}
+          placeholder="Search"
+          onChangeText={setCedula}
+          value={cedula}
+          onFocus={() => {
+            setClicked(true);
+            }}
+        />
+        {/* cross Icon, depending on whether the search bar is clicked or not */}
+        {
+  clicked ? (
+    <Entypo
+      name="cross"
+      size={20}
+      color="#000000"
+      style={{ padding: 1 }}
+      onPress={() => {
+        setClicked(false);
+        setCedula('');
+        cargarEstudiantes(0);
+      }}
+    />
+  ) : (
+    <View style={{ width: 22, height: 22, padding: 1 }} /> // Empty view with the same size as the icon
+  )
+}
+
+      </View>
      
-      <TextInput
-        style={styles.input}
-        onChangeText={onChangeNumber}
-        value={number}
-        placeholder="Buscar por cédula"
-        keyboardType="text"
-      />
-
-<Button
-  onPress={cargarEstudiantes}
-  title="Buscar"
-  color="#841584"
-  accessibilityLabel="Learn more about this purple button"
-  
-/>
-
-    </SafeAreaView>
+    <TouchableOpacity
+      style={styles.button}
+      onPress={() => cargarEstudiantes(1)}
+    >
+       <Feather
+          name="search"
+          size={20}
+          color="#000000"
+          style={{ marginLeft: 1 }}
+        />
+    </TouchableOpacity>
+  </View>
   );
 };
 
 const styles = StyleSheet.create({
-
-  SafeAreaView: {
-    display: "flex",
+  container: {
+    padding: 10,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     flexDirection: "row",
     width: "100%",
-    justifyContent: "center",
 
-    marginTop: 20,
-    
-},
-
-
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
+  },
+  
+  searchBar__clicked: {
     padding: 10,
+    flexDirection: "row",
+    width: "70%",
+    backgroundColor: "#d9dbda",
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  input: {
+    fontSize: 20,
+    marginLeft: 10,
+    width: "80%",
+  },
+  button: {
+    backgroundColor: "#d9dbda",
+    borderRadius: 25,
+    padding: 12,
+    marginLeft: 10,
   },
 });
 
 export default TextInputBuscar;
+
