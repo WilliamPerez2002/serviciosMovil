@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View, Modal, TouchableOpacity } from "react-native";
 import { useIsFocused } from '@react-navigation/native';
 import TextInputBuscar from "../components/text_input.jsx";
+import{GET_ALL_API, DELETE_API} from '@env';
 
 const StudentList = () => {
   const navigation = useNavigation();
@@ -20,7 +21,7 @@ const StudentList = () => {
 
   const cargarEstudiantes = () => {
     axios
-      .get("https://services-project-production.up.railway.app/rest/all")
+      .get(GET_ALL_API)
       .then((response) => {
         setStudents(response.data);
       })
@@ -40,7 +41,7 @@ const StudentList = () => {
   };
 
   const eliminarEstudiante = (cedula) => {
-    axios.delete(`https://services-project-production.up.railway.app/rest/delete/${cedula}`)
+    axios.delete(DELETE_API+cedula)
       .then(response => {
         cargarEstudiantes();
         console.log(response.data);

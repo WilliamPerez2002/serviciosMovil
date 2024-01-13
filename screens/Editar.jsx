@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
+import{PUT_API} from '@env';
 
 export default function StudentForm({ route }) {
     const navigation = useNavigation();
@@ -21,7 +22,7 @@ export default function StudentForm({ route }) {
     const [telefono, setTelefono] = useState("");
     const [direccion, setDireccion] = useState("");
     const handleSaveStudent = () => {
-        axios.put(`https://services-project-production.up.railway.app/rest/edit/${cedula}`, {
+        axios.put(PUT_API+cedula, {
             nombre: nombre,
             apellido: apellido,
             cedula: cedula,

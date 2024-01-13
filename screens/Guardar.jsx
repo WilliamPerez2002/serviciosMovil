@@ -3,6 +3,7 @@ import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import { showMessage } from "react-native-flash-message";
+import{GET_API,POST_API} from '@env';
 
 export default function StudentForm() {
     const navigation = useNavigation();
@@ -19,7 +20,7 @@ export default function StudentForm() {
     const comprobarEstudiante = () => {
         console.log(cedula);
         axios
-            .get(`https://services-project-production.up.railway.app/rest/get/${cedula}`)
+            .get(GET_API+cedula)
             .then((response) => {
                 
                     
@@ -40,7 +41,7 @@ export default function StudentForm() {
     const handleSaveStudent = () => {
 
 
-        axios.post(`https://services-project-production.up.railway.app/rest/save/${cedula}`, {
+        axios.post(POST_API+cedula, {
             nombre: nombre,
             apellido: apellido,
             telefono: telefono,
