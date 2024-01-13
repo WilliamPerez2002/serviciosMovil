@@ -14,7 +14,7 @@ const TextInputBuscar = (params) => {
 
     if (cedula == '' || num == 0) {
       axios
-        .get("https://services-project-production.up.railway.app/rest/all")
+        .get("https://services-project-production.up.railway.app/mobile/all")
         .then((response) => {
           params.setStudents(response.data);
         })
@@ -24,7 +24,7 @@ const TextInputBuscar = (params) => {
     }else{
 
       axios
-        .get(`https://services-project-production.up.railway.app/rest/search/${cedula}`)
+        .get(`https://services-project-production.up.railway.app/mobile/search/${cedula}`)
         .then((response) => {
   
           params.setStudents(response.data);
